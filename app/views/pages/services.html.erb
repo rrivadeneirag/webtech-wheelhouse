@@ -1,0 +1,20 @@
+<h1>Services &amp; prices</h1>
+
+<p>Our current wall list of services and prices. Prices are the current year's, updated each January.</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Service</th>
+      <th scope="col">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @services.each do |service| %>
+      <tr>
+        <td><%= service[:name] %></td>
+        <td>$<%= service[:price] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

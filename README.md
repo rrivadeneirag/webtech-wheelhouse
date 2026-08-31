@@ -1,26 +1,38 @@
 # Wheelhouse
 
-Wheelhouse is a neighbourhood bicycle repair shop. This repository holds the
-specification for its management system: what the shop does, who uses it, and the
-model the application will be built from, starting in Lab 4.
+The public website for **Wheelhouse**, a neighborhood bike repair shop. It has
+four pages: Home, Services & prices, Visiting the workshop, and About. The site
+is public and read-only — no customer, bike, or repair information appears.
 
-## Who uses it
+Built with **Ruby on Rails 8**, **PostgreSQL**, and **Bootstrap** (compiled from
+Sass, no CDN).
 
-- **Counter staff** — register arriving bikes, tell customers whether a bike is
-  ready, and hand bikes back at pickup.
-- **Mechanics** — assess bikes, photograph them on arrival, write diagnoses, and
-  do the work.
-- **Owner** — watches the promised dates and keeps the price list up to date.
-- **Customers** — approve or decline estimates and follow a bike's repair history.
-- **The public** — check the shop's service prices online.
+The design documents this app is built from live in the docs/ folder: the domain
+model, user stories, wireframes, and decisions from Lab 3.
 
-## Documents
+## Prerequisites
 
-- [User stories](docs/user-stories.md) — what the system does, for whom, and why
-  (Requirements 1–2).
-- [Domain model](docs/domain-model.md) — entities, relationships, the repair
-  lifecycle, and the decisions behind them (Requirements 3–5).
-- [Decisions record](docs/decisions.md) — the questions the description does not
-  answer (Requirement 6).
-- [Wireframes](docs/wireframes.md) — the screens and how they connect
-  (Requirement 7).
+Install and have these working before setup:
+
+- **Ruby 4.0.4** (see .ruby-version)
+- **Node.js 24 or newer** and npm (used only to compile Bootstrap's CSS)
+- **PostgreSQL 17**, running locally, with a role that can create databases
+
+## Setup
+
+Run these in order, from a terminal:
+
+    git clone https://github.com/rrivadeneirag/webtech-wheelhouse
+    cd webtech-wheelhouse
+    bundle install
+    npm install
+    gem install foreman
+    bin/rails db:create
+    npm run build:css
+
+## Running the app
+
+    bin/dev
+
+This starts the Rails server and the CSS watcher together, then open
+http://localhost:3000 in your browser.

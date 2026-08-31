@@ -1,0 +1,9 @@
+// Wheelhouse — Bootstrap variable overrides.
+// These go BEFORE the Bootstrap import: Bootstrap declares its variables
+// with !default, so a value set earlier wins over the default.
+$primary:       #0d5c3f;  // Wheelhouse green (buttons, links, active nav)
+$body-bg:       #f7f7f5;  // warm off-white page background
+$border-radius: 0.5rem;   // slightly rounder corners everywhere
+
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons';
