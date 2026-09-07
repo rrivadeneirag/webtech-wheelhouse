@@ -9,9 +9,9 @@
 The image above was produced from this code in [dbdiagram.io](https://dbdiagram.io).
 It compiles as it stands and describes the schema built in Lab 5 (see `db/schema.rb`):
 six tables, `bigint` primary and reference columns, `decimal(8,2)` money, and the
-unique indexes the database enforces. Foreign-key constraints are **not** declared —
-the `_id` columns are plain columns today; the constraints and the Rails associations
-that use them are added in Lab 7.
+unique indexes the database enforces. The relationships are drawn from the `_id`
+columns. The database does **not** yet enforce them with foreign-key constraints —
+those, and the Rails associations that use them, are added in Lab 7.
 
 ```dbml
 Table customers {
@@ -83,6 +83,14 @@ Table repair_services {
     service_id
   }
 }
+
+// Relationships carried by the _id columns.
+// Drawn here; enforced by foreign-key constraints in Lab 7.
+Ref: bikes.customer_id > customers.id
+Ref: repairs.bike_id > bikes.id
+Ref: repairs.mechanic_id > staffs.id
+Ref: repair_services.repair_id > repairs.id
+Ref: repair_services.service_id > services.id
 ```
 
 ## Relationships
@@ -155,8 +163,9 @@ Every difference between the diagram submitted in Lab 3 and the schema built tod
 - **All `id` and `_id` columns are `bigint`** (the Rails 8 default) rather than
   `integer`; each `_id` is the same type as the `id` it holds.
 - **`created_at` / `updated_at` added to every table** — Rails timestamps.
-- **Foreign-key `ref`s removed** — the `_id` columns are plain columns today; the
-  foreign-key constraints and the Rails associations are added in Lab 7.
+- **Relationships shown but not enforced** — the diagram draws the relationships the
+  `_id` columns carry, but the database does not enforce them with foreign-key
+  constraints today; those constraints and the Rails associations are added in Lab 7.
 
 ## Entities and the stories that require them
 
