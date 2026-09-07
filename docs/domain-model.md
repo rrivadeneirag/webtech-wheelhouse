@@ -7,81 +7,111 @@
 ## DBML
 
 The image above was produced from this code in [dbdiagram.io](https://dbdiagram.io).
-It compiles as it stands.
+It compiles as it stands and describes the schema built in Lab 5 (see `db/schema.rb`):
+six tables, `bigint` primary and reference columns, `decimal(8,2)` money, and the
+unique indexes the database enforces. Foreign-key constraints are **not** declared —
+the `_id` columns are plain columns today; the constraints and the Rails associations
+that use them are added in Lab 7.
 
 ```dbml
 Table customers {
-  id integer [primary key]
+  id bigint [primary key]
   name varchar [not null]
   phone varchar [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
 }
 
-Table bikes {
-  id integer [primary key]
-  make_model varchar [not null]
-  serial_number varchar [not null, unique]
-  colour varchar
-  customer_id integer [not null, ref: > customers.id]
-}
-
-Table staff {
-  id integer [primary key]
+Table staffs {
+  id bigint [primary key]
   name varchar [not null]
   role varchar [not null]
-}
-
-Table repairs {
-  id integer [primary key]
-  bike_id integer [not null, ref: > bikes.id]
-  mechanic_id integer [ref: > staff.id]
-  status varchar [not null]
-  received_at datetime [not null]
-  promised_for date
-  diagnosis text
+  created_at datetime [not null]
+  updated_at datetime [not null]
 }
 
 Table services {
-  id integer [primary key]
-  name varchar [not null]
-  price decimal [not null]
+  id bigint [primary key]
+  name varchar [not null, unique]
+  price decimal(8,2) [not null]
   active boolean [not null, default: true]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
+
+Table bikes {
+  id bigint [primary key]
+  make_model varchar [not null]
+  serial_number varchar [not null, unique]
+  colour varchar
+  customer_id bigint [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  indexes {
+    customer_id
+  }
+}
+
+Table repairs {
+  id bigint [primary key]
+  bike_id bigint [not null]
+  mechanic_id bigint
+  status varchar [not null, default: 'Received']
+  received_at datetime [not null]
+  promised_on date
+  handed_back_at datetime
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  indexes {
+    bike_id
+    mechanic_id
+  }
 }
 
 Table repair_services {
-  id integer [primary key]
-  repair_id integer [not null, ref: > repairs.id]
-  service_id integer [not null, ref: > services.id]
-  charged_price decimal [not null]
-}
+  id bigint [primary key]
+  repair_id bigint [not null]
+  service_id bigint [not null]
+  charged_price decimal(8,2) [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
 
-Table photos {
-  id integer [primary key]
-  repair_id integer [not null, ref: > repairs.id]
-  file_url varchar [not null]
-  taken_at datetime [not null]
+  indexes {
+    repair_id
+    service_id
+  }
 }
 ```
 
-Relationships (each cardinality read in both directions):
+## Relationships
 
-- A customer owns many bikes; a bike has one current owner. Ownership can change,
-  so repair history hangs off the bike, not the customer.
-- A bike has many repairs over its life; a repair is for exactly one bike.
-- A repair has many priced line items; each line item belongs to one repair.
-- A service can appear on many repairs; a repair line item points to one service.
-  `repair_services` is the many-to-many join between repairs and services.
-- A repair has many arrival photos; a photo belongs to one repair.
-- A staff member handles many repairs; a repair has one responsible mechanic.
+The `_id` columns carry these relationships. They are plain columns today; the
+foreign-key constraints that enforce them, and the Rails associations that use them,
+are added in Lab 7.
+
+- A customer owns many bikes; a bike has one current owner (`bikes.customer_id`).
+  Ownership can change, so repair history hangs off the bike, not the customer.
+- A bike has many repairs over its life; a repair is for exactly one bike (`repairs.bike_id`).
+- A repair has many priced line items; each line item belongs to one repair
+  (`repair_services.repair_id`).
+- A service can appear on many repairs; a line item points to one service
+  (`repair_services.service_id`). `repair_services` is the many-to-many join between
+  repairs and services.
+- A staff member handles many repairs; a repair has one responsible mechanic
+  (`repairs.mechanic_id`, nullable — a repair can arrive before a mechanic is assigned).
 
 ## Lifecycle of a repair
 
-`repairs.status` moves through these states:
+`repairs.status` moves through these states, and the column defaults to the first one,
+`Received`:
 
 **Received → Assessed → Awaiting approval → Approved / Declined → In progress → Ready → Collected**
 
 Allowed transitions:
 
-- **Received → Assessed** — a mechanic inspects the bike and writes the diagnosis.
+- **Received → Assessed** — a mechanic inspects the bike and assesses the work.
 - **Assessed → In progress** — a minor job that needs no approval starts directly.
 - **Assessed → Awaiting approval** — the job needs the customer's yes first.
 - **Awaiting approval → Approved** — the customer agrees to the estimate.
@@ -103,17 +133,43 @@ Transitions that are **not** allowed:
   new repair, which keeps the bike's history correct.
 - **Collected → any state** — once collected, the repair is closed.
 
+## Changes since Lab 3
+
+Every difference between the diagram submitted in Lab 3 and the schema built today:
+
+- **`photos` table removed** — arrival photos arrive in Lab 9 with their own table;
+  this lab excludes them.
+- **`repairs.diagnosis` removed** — the written diagnosis arrives in Lab 9 with its
+  own table.
+- **`repairs.promised_for` renamed to `promised_on`** — a column that holds a day uses
+  the `_on` suffix (a datetime instant would use `_at`).
+- **`repairs.handed_back_at` added** (datetime, nullable) — the instant the bike was
+  handed back; it tells a repair still in the shop apart from one already collected. A
+  repair that has not been handed back has no value here.
+- **Table `staff` renamed to `staffs`** — Rails pluralization, so the `Staff` model
+  finds its table with no explicit `table_name`.
+- **`price` and `charged_price` typed as `decimal(8,2)`** — money is never a float;
+  precision and scale are declared.
+- **`repairs.status` given a default of `Received`** — a repair inserted with no state
+  starts in the first state of the lifecycle.
+- **All `id` and `_id` columns are `bigint`** (the Rails 8 default) rather than
+  `integer`; each `_id` is the same type as the `id` it holds.
+- **`created_at` / `updated_at` added to every table** — Rails timestamps.
+- **Foreign-key `ref`s removed** — the `_id` columns are plain columns today; the
+  foreign-key constraints and the Rails associations are added in Lab 7.
+
 ## Entities and the stories that require them
 
 | Entity | Story that requires it |
 |---|---|
 | customers | Story 1 — register the owner's name and phone |
 | bikes | Story 1 & 10 — identify a bike by serial and carry its history |
-| staff | Story 5 & 6 — the mechanic who photographs, diagnoses and is accountable |
+| staffs | Story 5 & 6 — the mechanic responsible for a repair |
 | repairs | Stories 5–8 & 12 — the repair record and its promised date |
 | services | Story 7 & 14 — the priced wall list, shown publicly |
 | repair_services | Story 7, 9 & 13 — the services on a repair, at the price charged |
-| photos | Story 5 — the arrival photos |
+
+(The `photos` row is gone: that table is deferred to Lab 9.)
 
 ## Two decisions
 
