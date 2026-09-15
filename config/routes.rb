@@ -1,8 +1,15 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Static pages from Lab 4
   root "pages#home"
-  get "services", to: "pages#services", as: :services
   get "visiting", to: "pages#visiting", as: :visiting
   get "about",    to: "pages#about",    as: :about
+
+  # One list + one detail per resource (index and show only)
+  resources :customers, only: [:index, :show]
+  resources :bikes,     only: [:index, :show]
+  resources :repairs,   only: [:index, :show]
+  resources :services,  only: [:index, :show]
+  resources :staffs,    only: [:index, :show]
 end

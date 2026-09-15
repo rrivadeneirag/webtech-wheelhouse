@@ -1,0 +1,18 @@
+<% content_for :title, @bike.make_model %>
+<p><%= link_to "← All bikes", bikes_path %></p>
+<h1><%= @bike.make_model %></h1>
+<dl class="row">
+  <dt class="col-sm-3">Serial number</dt><dd class="col-sm-9"><%= @bike.serial_number %></dd>
+  <dt class="col-sm-3">Colour</dt><dd class="col-sm-9"><%= @bike.colour.presence || "—" %></dd>
+  <dt class="col-sm-3">Owner</dt><dd class="col-sm-9"><%= link_to @bike.customer.name, @bike.customer %></dd>
+</dl>
+
+<h2 class="h4">Repairs</h2>
+<% if @bike.repairs.any? %>
+  <table class="table table-striped align-middle">
+    <thead><tr><th>Repair</th><th>Bike</th><th>Customer</th><th>Status</th><th>Promised</th></tr></thead>
+    <tbody><%= render @bike.repairs %></tbody>
+  </table>
+<% else %>
+  <p class="text-muted">This bike has never been in for a repair.</p>
+<% end %>

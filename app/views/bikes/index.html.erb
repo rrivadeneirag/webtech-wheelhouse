@@ -1,0 +1,9 @@
+<h1>Bikes</h1>
+<% if @bikes.any? %>
+  <table class="table table-striped">
+    <thead><tr><th>Model</th><th>Serial</th><th>Colour</th><th>Owner</th></tr></thead>
+    <tbody><%= render @bikes %></tbody>
+  </table>
+<% else %>
+  <p class="text-muted">No bikes yet.</p>
+<% end %>

@@ -1,0 +1,8 @@
+<% overdue = repair.promised_on.present? && repair.promised_on < Date.current && repair.handed_back_at.nil? && repair.status != "Collected" %>
+<tr class="<%= 'table-warning' if overdue %>">
+  <td><%= link_to "Repair ##{repair.id}", repair %></td>
+  <td><%= link_to repair.bike.make_model, repair.bike %></td>
+  <td><%= link_to repair.bike.customer.name, repair.bike.customer %></td>
+  <td><span class="badge text-bg-secondary"><%= repair.status %></span></td>
+  <td><%= format_day(repair.promised_on) || "—" %><% if overdue %> <span class="badge text-bg-warning">overdue</span><% end %></td>
+</tr>

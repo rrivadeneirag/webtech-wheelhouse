@@ -1,0 +1,9 @@
+<h1>Staff</h1>
+<% if @staffs.any? %>
+  <table class="table table-striped">
+    <thead><tr><th>Name</th><th>Role</th><th>Repairs</th></tr></thead>
+    <tbody><%= render @staffs %></tbody>
+  </table>
+<% else %>
+  <p class="text-muted">No staff yet.</p>
+<% end %>

@@ -1,0 +1,6 @@
+<tr>
+  <td><%= link_to bike.make_model, bike %></td>
+  <td><%= bike.serial_number %></td>
+  <td><%= bike.colour.presence || "—" %></td>
+  <td><%= link_to bike.customer.name, bike.customer %></td>
+</tr>

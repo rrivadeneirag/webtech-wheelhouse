@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Webtech Wheelhouse" %></title>
+    <title><%= content_for(:title) || "Wheelhouse" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Webtech Wheelhouse">
+    <meta name="application-name" content="Wheelhouse">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -28,18 +28,14 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <%= link_to "Home", root_path, class: "nav-link #{'active' if current_page?(root_path)}" %>
-            </li>
-            <li class="nav-item">
-              <%= link_to "Services", services_path, class: "nav-link #{'active' if current_page?(services_path)}" %>
-            </li>
-            <li class="nav-item">
-              <%= link_to "Visiting the workshop", visiting_path, class: "nav-link #{'active' if current_page?(visiting_path)}" %>
-            </li>
-            <li class="nav-item">
-              <%= link_to "About", about_path, class: "nav-link #{'active' if current_page?(about_path)}" %>
-            </li>
+            <li class="nav-item"><%= link_to "Home", root_path, class: "nav-link #{'active' if current_page?(root_path)}" %></li>
+            <li class="nav-item"><%= link_to "Customers", customers_path, class: "nav-link #{'active' if current_page?(customers_path)}" %></li>
+            <li class="nav-item"><%= link_to "Bikes", bikes_path, class: "nav-link #{'active' if current_page?(bikes_path)}" %></li>
+            <li class="nav-item"><%= link_to "Repairs", repairs_path, class: "nav-link #{'active' if current_page?(repairs_path)}" %></li>
+            <li class="nav-item"><%= link_to "Services", services_path, class: "nav-link #{'active' if current_page?(services_path)}" %></li>
+            <li class="nav-item"><%= link_to "Staff", staffs_path, class: "nav-link #{'active' if current_page?(staffs_path)}" %></li>
+            <li class="nav-item"><%= link_to "Visiting", visiting_path, class: "nav-link #{'active' if current_page?(visiting_path)}" %></li>
+            <li class="nav-item"><%= link_to "About", about_path, class: "nav-link #{'active' if current_page?(about_path)}" %></li>
           </ul>
         </div>
       </div>

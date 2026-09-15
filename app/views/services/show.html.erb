@@ -1,0 +1,24 @@
+<% content_for :title, @service.name %>
+<p><%= link_to "← All services", services_path %></p>
+<h1><%= @service.name %></h1>
+<dl class="row">
+  <dt class="col-sm-3">Current price</dt><dd class="col-sm-9"><%= number_to_currency(@service.price) %></dd>
+</dl>
+
+<h2 class="h4">Charged on these repairs</h2>
+<% if @service.repair_services.any? %>
+  <table class="table table-striped">
+    <thead><tr><th>Repair</th><th>Bike</th><th class="text-end">Charged</th></tr></thead>
+    <tbody>
+      <% @service.repair_services.each do |line| %>
+        <tr>
+          <td><%= link_to "Repair ##{line.repair.id}", line.repair %></td>
+          <td><%= link_to line.repair.bike.make_model, line.repair.bike %></td>
+          <td class="text-end"><%= number_to_currency(line.charged_price) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="text-muted">This service has not been charged on any repair yet.</p>
+<% end %>

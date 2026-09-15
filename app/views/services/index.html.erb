@@ -1,0 +1,10 @@
+<h1>Services &amp; prices</h1>
+<p>Our current wall list of services and prices.</p>
+<% if @services.any? %>
+  <table class="table table-striped">
+    <thead><tr><th>Service</th><th>Price</th></tr></thead>
+    <tbody><%= render @services %></tbody>
+  </table>
+<% else %>
+  <p class="text-muted">No services yet.</p>
+<% end %>
