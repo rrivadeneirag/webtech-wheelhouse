@@ -6,11 +6,11 @@
 </dl>
 
 <h2 class="h4">Charged on these repairs</h2>
-<% if @service.repair_services.any? %>
+<% if @lines.any? %>
   <table class="table table-striped">
     <thead><tr><th>Repair</th><th>Bike</th><th class="text-end">Charged</th></tr></thead>
     <tbody>
-      <% @service.repair_services.each do |line| %>
+      <% @lines.each do |line| %>
         <tr>
           <td><%= link_to "Repair ##{line.repair.id}", line.repair %></td>
           <td><%= link_to line.repair.bike.make_model, line.repair.bike %></td>

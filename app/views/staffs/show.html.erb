@@ -6,10 +6,10 @@
 </dl>
 
 <h2 class="h4">Repairs handled</h2>
-<% if @staff.repairs.any? %>
+<% if @repairs.any? %>
   <table class="table table-striped align-middle">
     <thead><tr><th>Repair</th><th>Bike</th><th>Customer</th><th>Status</th><th>Promised</th></tr></thead>
-    <tbody><%= render @staff.repairs %></tbody>
+    <tbody><%= render @repairs %></tbody>
   </table>
 <% else %>
   <p class="text-muted">This staff member has not handled any repairs yet.</p>

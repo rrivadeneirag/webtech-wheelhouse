@@ -1,10 +1,10 @@
 class RepairsController < ApplicationController
   def index
-    # Most recently received first — the counter cares about current work.
-    @repairs = Repair.order(received_at: :desc)
+    @repairs = Repair.newest_first.includes(bike: :customer)
   end
 
   def show
-    @repair = Repair.find(params[:id])
+    @repair = Repair.includes(:mechanic, bike: :customer).find(params[:id])
+    @lines = @repair.repair_services.oldest_first.includes(:service)
   end
 end
