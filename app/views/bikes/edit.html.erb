@@ -1,0 +1,4 @@
+<% content_for :title, "Edit #{@bike.make_model}" %>
+<p><%= link_to "← Back to #{@bike.make_model}", @bike %></p>
+<h1>Edit <%= @bike.make_model %></h1>
+<%= render "form", bike: @bike %>

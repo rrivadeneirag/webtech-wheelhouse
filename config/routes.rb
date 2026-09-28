@@ -6,10 +6,10 @@ Rails.application.routes.draw do
   get "visiting", to: "pages#visiting", as: :visiting
   get "about",    to: "pages#about",    as: :about
 
-  # One list + one detail per resource (index and show only)
-  resources :customers, only: [:index, :show]
-  resources :bikes,     only: [:index, :show]
-  resources :repairs,   only: [:index, :show]
-  resources :services,  only: [:index, :show]
-  resources :staffs,    only: [:index, :show]
+  # Full CRUD from the browser: all seven RESTful actions per resource.
+  resources :customers
+  resources :bikes
+  resources :repairs
+  resources :services
+  resources :staffs
 end

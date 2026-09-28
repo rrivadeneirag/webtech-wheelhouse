@@ -4,6 +4,12 @@ class Repair < ApplicationRecord
   has_many :repair_services, dependent: :destroy
   has_many :services, through: :repair_services
 
+  # The repair form writes two tables at once. A line with no service chosen is
+  # ignored (not an error); an existing line can be removed with its checkbox.
+  accepts_nested_attributes_for :repair_services,
+                                allow_destroy: true,
+                                reject_if: ->(attrs) { attrs["service_id"].blank? }
+
   enum :status, {
     received:          "Received",
     assessed:          "Assessed",
@@ -29,7 +35,7 @@ class Repair < ApplicationRecord
   end
 
   def total
-    repair_services.sum(&:charged_price)
+    repair_services.reject(&:marked_for_destruction?).sum { |line| line.charged_price || 0 }
   end
 
   private

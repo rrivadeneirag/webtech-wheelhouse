@@ -1,0 +1,4 @@
+<% content_for :title, "Edit #{@staff.name}" %>
+<p><%= link_to "← Back to #{@staff.name}", @staff %></p>
+<h1>Edit <%= @staff.name %></h1>
+<%= render "form", staff: @staff %>

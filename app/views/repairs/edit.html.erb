@@ -1,0 +1,4 @@
+<% content_for :title, "Edit repair ##{@repair.id}" %>
+<p><%= link_to "← Back to repair ##{@repair.id}", @repair %></p>
+<h1>Edit repair #<%= @repair.id %></h1>
+<%= render "form", repair: @repair %>

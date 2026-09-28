@@ -1,6 +1,13 @@
 <% content_for :title, @bike.make_model %>
 <p><%= link_to "← All bikes", bikes_path %></p>
-<h1><%= @bike.make_model %></h1>
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <h1 class="mb-0"><%= @bike.make_model %></h1>
+  <div class="d-flex gap-2">
+    <%= link_to "Edit", edit_bike_path(@bike), class: "btn btn-outline-primary" %>
+    <%= button_to "Delete", @bike, method: :delete, class: "btn btn-outline-danger",
+          form: { data: { turbo_confirm: "Delete #{@bike.make_model}? This also removes its repairs." } } %>
+  </div>
+</div>
 <dl class="row">
   <dt class="col-sm-3">Serial number</dt><dd class="col-sm-9"><%= @bike.serial_number %></dd>
   <dt class="col-sm-3">Colour</dt><dd class="col-sm-9"><%= @bike.colour.presence || "—" %></dd>

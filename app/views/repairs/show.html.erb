@@ -1,6 +1,13 @@
 <% content_for :title, "Repair ##{@repair.id}" %>
 <p><%= link_to "← All repairs", repairs_path %></p>
-<h1>Repair #<%= @repair.id %></h1>
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <h1 class="mb-0">Repair #<%= @repair.id %></h1>
+  <div class="d-flex gap-2">
+    <%= link_to "Edit", edit_repair_path(@repair), class: "btn btn-outline-primary" %>
+    <%= button_to "Delete", @repair, method: :delete, class: "btn btn-outline-danger",
+          form: { data: { turbo_confirm: "Delete repair ##{@repair.id}? This cannot be undone." } } %>
+  </div>
+</div>
 <dl class="row">
   <dt class="col-sm-3">Bike</dt><dd class="col-sm-9"><%= link_to @repair.bike.make_model, @repair.bike %></dd>
   <dt class="col-sm-3">Customer</dt><dd class="col-sm-9"><%= link_to @repair.bike.customer.name, @repair.bike.customer %></dd>

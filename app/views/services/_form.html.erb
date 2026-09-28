@@ -1,0 +1,25 @@
+<%= form_with model: service, class: "mb-4" do |form| %>
+  <%= render "shared/errors", object: service %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control #{invalid_class(service, :name)}" %>
+    <%= field_feedback(service, :name) %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :price, class: "form-label" %>
+    <%= form.number_field :price, step: "0.01", class: "form-control #{invalid_class(service, :price)}" %>
+    <%= field_feedback(service, :price) %>
+  </div>
+
+  <div class="mb-3 form-check">
+    <%= form.check_box :active, class: "form-check-input" %>
+    <%= form.label :active, "Currently offered", class: "form-check-label" %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", (service.persisted? ? service : services_path), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

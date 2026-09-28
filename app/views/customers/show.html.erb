@@ -1,11 +1,21 @@
 <% content_for :title, @customer.name %>
 <p><%= link_to "← All customers", customers_path %></p>
-<h1><%= @customer.name %></h1>
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <h1 class="mb-0"><%= @customer.name %></h1>
+  <div class="d-flex gap-2">
+    <%= link_to "Edit", edit_customer_path(@customer), class: "btn btn-outline-primary" %>
+    <%= button_to "Delete", @customer, method: :delete, class: "btn btn-outline-danger",
+          form: { data: { turbo_confirm: "Delete #{@customer.name}? This cannot be undone." } } %>
+  </div>
+</div>
 <dl class="row">
   <dt class="col-sm-3">Phone</dt><dd class="col-sm-9"><%= @customer.phone %></dd>
 </dl>
 
-<h2 class="h4">Bikes</h2>
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h2 class="h4 mb-0">Bikes</h2>
+  <%= link_to "New bike", new_bike_path(customer_id: @customer.id), class: "btn btn-sm btn-outline-primary" %>
+</div>
 <% if @bikes.any? %>
   <table class="table table-striped">
     <thead><tr><th>Model</th><th>Serial</th><th>Colour</th><th>Owner</th></tr></thead>

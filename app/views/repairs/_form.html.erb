@@ -1,0 +1,76 @@
+<%= form_with model: repair, class: "mb-4" do |form| %>
+  <%= render "shared/errors", object: repair %>
+
+  <div class="mb-3">
+    <%= form.label :bike_id, "Bike", class: "form-label" %>
+    <%= form.collection_select :bike_id, Bike.by_model, :id, :make_model,
+          { prompt: "Choose a bike" }, class: "form-select #{invalid_class(repair, :bike, :bike_id)}" %>
+    <%= field_feedback(repair, :bike) %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :mechanic_id, "Mechanic", class: "form-label" %>
+    <%= form.collection_select :mechanic_id, Staff.by_name, :id, :name,
+          { include_blank: "Unassigned" }, class: "form-select #{invalid_class(repair, :mechanic_id)}" %>
+    <%= field_feedback(repair, :mechanic_id) %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :status, class: "form-label" %>
+    <%= form.select :status, Repair.statuses.keys.map { |s| [s.humanize, s] },
+          {}, class: "form-select #{invalid_class(repair, :status)}" %>
+    <%= field_feedback(repair, :status) %>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <%= form.label :received_at, "Received", class: "form-label" %>
+      <%= form.datetime_local_field :received_at, class: "form-control #{invalid_class(repair, :received_at)}" %>
+      <%= field_feedback(repair, :received_at) %>
+    </div>
+    <div class="col-md-4 mb-3">
+      <%= form.label :promised_on, "Promised", class: "form-label" %>
+      <%= form.date_field :promised_on, class: "form-control #{invalid_class(repair, :promised_on)}" %>
+      <%= field_feedback(repair, :promised_on) %>
+    </div>
+    <div class="col-md-4 mb-3">
+      <%= form.label :handed_back_at, "Handed back", class: "form-label" %>
+      <%= form.datetime_local_field :handed_back_at, class: "form-control #{invalid_class(repair, :handed_back_at)}" %>
+      <%= field_feedback(repair, :handed_back_at) %>
+    </div>
+  </div>
+
+  <h2 class="h5">Services charged</h2>
+  <p class="text-muted small">Pick a service and the price charged that day. Leave a row's service blank to skip it.</p>
+  <table class="table align-middle">
+    <thead><tr><th>Service</th><th>Charged price</th><th>Remove</th></tr></thead>
+    <tbody>
+      <%= form.fields_for :repair_services do |line| %>
+        <tr>
+          <td>
+            <%= line.collection_select :service_id, Service.by_name, :id, :name,
+                  { include_blank: "— none —" }, class: "form-select" %>
+          </td>
+          <td>
+            <%= line.number_field :charged_price, step: "0.01", class: "form-control" %>
+          </td>
+          <td>
+            <% if line.object.persisted? %>
+              <div class="form-check">
+                <%= line.check_box :_destroy, class: "form-check-input" %>
+                <%= line.label :_destroy, "Remove", class: "form-check-label" %>
+              </div>
+            <% else %>
+              <span class="text-muted small">—</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", (repair.persisted? ? repair : repairs_path), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

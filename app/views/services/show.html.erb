@@ -1,8 +1,16 @@
 <% content_for :title, @service.name %>
 <p><%= link_to "← All services", services_path %></p>
-<h1><%= @service.name %></h1>
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <h1 class="mb-0"><%= @service.name %></h1>
+  <div class="d-flex gap-2">
+    <%= link_to "Edit", edit_service_path(@service), class: "btn btn-outline-primary" %>
+    <%= button_to "Delete", @service, method: :delete, class: "btn btn-outline-danger",
+          form: { data: { turbo_confirm: "Delete #{@service.name}?" } } %>
+  </div>
+</div>
 <dl class="row">
   <dt class="col-sm-3">Current price</dt><dd class="col-sm-9"><%= number_to_currency(@service.price) %></dd>
+  <dt class="col-sm-3">Offered</dt><dd class="col-sm-9"><%= @service.active? ? "Yes" : "No" %></dd>
 </dl>
 
 <h2 class="h4">Charged on these repairs</h2>
