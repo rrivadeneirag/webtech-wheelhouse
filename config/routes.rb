@@ -6,10 +6,14 @@ Rails.application.routes.draw do
   get "visiting", to: "pages#visiting", as: :visiting
   get "about",    to: "pages#about",    as: :about
 
-  # Full CRUD from the browser: all seven RESTful actions per resource.
+  # Full CRUD from the browser.
   resources :customers
   resources :bikes
-  resources :repairs
   resources :services
   resources :staffs
+
+  # A repair, plus its intake photos which can be removed one at a time.
+  resources :repairs do
+    resources :photos, only: :destroy, controller: "intake_photos"
+  end
 end

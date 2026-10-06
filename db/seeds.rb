@@ -7,6 +7,13 @@
 # so a repair that is overdue today is still overdue whenever the file is run.
 
 # --- Reset (children before parents) -------------------------------------------
+# --- Lab 9: clear attachments and rich text first, so re-running the seed leaves
+# the same number of rows in the Active Storage and Action Text tables too. -------
+if ActiveRecord::Base.connection.table_exists?("active_storage_attachments")
+  ActiveStorage::Attachment.all.each(&:purge)
+end
+ActionText::RichText.delete_all if ActiveRecord::Base.connection.table_exists?("action_text_rich_texts")
+
 RepairService.delete_all
 Repair.delete_all
 Bike.delete_all
@@ -166,6 +173,42 @@ r16 = Repair.create!(bike_id: talon.id, mechanic_id: camila.id, status: :collect
                      received_at: 40.days.ago, promised_on: 37.days.ago.to_date, handed_back_at: 36.days.ago)
 add_services(r16, services, [["Tube replacement", 12], ["Flat tire repair", 15]])
 
+
+# --- Lab 9: intake photos + diagnoses ------------------------------------------
+# Photos are the committed bike images in db/seeds/bike_photos/ (illustrations made
+# for this app, free to use). The same file may be attached to several repairs.
+photo_files = Dir[Rails.root.join("db/seeds/bike_photos/*.jpg")].sort
+raise "No seed bike photos found in db/seeds/bike_photos/" if photo_files.empty?
+
+def diagnosis_html(summary, items)
+  "<div><strong>Assessment:</strong> #{summary}</div>" \
+    "<ul>#{items.map { |i| "<li>#{i}</li>" }.join}</ul>"
+end
+
+notes = [
+  ["Drivetrain worn but serviceable.",        ["Chain at 0.75% stretch", "Cassette lightly pitted", "Degrease and relube"]],
+  ["Braking needs attention before release.", ["Front pads below the wear line", "Rotor trued", "Rear caliper bled"]],
+  ["Wheel knocked out of true by a kerb.",    ["3 mm lateral runout", "Two spokes loose", "Re-tensioned and trued"]],
+  ["Routine tune-up, bike in good shape.",    ["Shifting re-indexed", "Tyres to pressure", "Bolts torqued"]],
+  ["Bottom bracket play found.",              ["Creak under load", "Bearings notchy", "BB cartridge replaced"]],
+  ["Flat from a pinch on a kerb.",            ["Snake-bite puncture", "Rim tape intact", "New tube fitted"]],
+]
+
+# The two most recently received repairs are "just taken in": no photos, no diagnosis.
+just_in  = Repair.order(received_at: :desc).first(2)
+eligible = Repair.order(:id).to_a.reject { |r| just_in.include?(r) }
+
+eligible.each_with_index do |repair, i|
+  count            = i.zero? ? 4 : 1 + (i % 3)   # first eligible repair gets four photos
+  summary, items   = notes[i % notes.size]
+  repair.diagnosis = diagnosis_html(summary, items)
+  photo_files.cycle.first(count).each do |path|
+    repair.intake_photos.attach(io: File.open(path), filename: File.basename(path), content_type: "image/jpeg")
+  end
+  repair.save!
+end
+
 puts "Seed complete:"
 puts "  #{Customer.count} customers, #{Bike.count} bikes, #{Staff.count} staff"
 puts "  #{Service.count} services, #{Repair.count} repairs, #{RepairService.count} line items"
+puts "  #{ActiveStorage::Attachment.where(name: "intake_photos").count} intake photos, #{ActionText::RichText.where(record_type: "Repair").count} diagnoses"

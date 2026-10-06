@@ -40,6 +40,22 @@
     </div>
   </div>
 
+  <div class="mb-3">
+    <%= form.label :diagnosis, "Diagnosis", class: "form-label" %>
+    <%= form.rich_text_area :diagnosis, class: invalid_class(repair, :diagnosis) %>
+    <div class="form-text">The mechanic's write-up. Bold, lists, links and quotes are kept.</div>
+    <%= field_feedback(repair, :diagnosis) %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :intake_photos, "Intake photos", class: "form-label" %>
+    <%= form.file_field :intake_photos, multiple: true,
+          accept: "image/jpeg,image/png,image/heic,image/heif,image/webp",
+          class: "form-control #{invalid_class(repair, :intake_photos)}" %>
+    <div class="form-text">JPEG, PNG, HEIC or WebP, up to 10 MB each. On a repair that already has photos, the files you choose are added to them.</div>
+    <%= field_feedback(repair, :intake_photos) %>
+  </div>
+
   <h2 class="h5">Services charged</h2>
   <p class="text-muted small">Pick a service and the price charged that day. Leave a row's service blank to skip it.</p>
   <table class="table align-middle">

@@ -7,3 +7,6 @@ $border-radius: 0.5rem;   // slightly rounder corners everywhere
 
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
+
+// Trix editor + rich-text content styles (Lab 9)
+@import 'trix/dist/trix';

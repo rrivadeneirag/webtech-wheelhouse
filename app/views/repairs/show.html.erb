@@ -18,7 +18,34 @@
   <dt class="col-sm-3">Handed back</dt><dd class="col-sm-9"><%= format_instant(@repair.handed_back_at) || "—" %></dd>
 </dl>
 
-<h2 class="h4">Services charged</h2>
+<h2 class="h4">Diagnosis</h2>
+<% if @repair.diagnosis.present? %>
+  <%= @repair.diagnosis %>
+<% else %>
+  <p class="text-muted">No diagnosis written yet.</p>
+<% end %>
+
+<h2 class="h4 mt-4">Intake photos</h2>
+<% if @repair.intake_photos.attached? %>
+  <div class="row g-3">
+    <% @repair.intake_photos.each do |photo| %>
+      <div class="col-6 col-md-3">
+        <%= link_to rails_blob_path(photo, disposition: "inline"), target: "_blank", rel: "noopener" do %>
+          <%= image_tag photo.variant(:card),
+                alt: "Intake photo of #{@repair.bike.make_model} for repair ##{@repair.id}",
+                class: "img-fluid rounded border" %>
+        <% end %>
+        <%= button_to "Remove", repair_photo_path(@repair, photo), method: :delete,
+              class: "btn btn-sm btn-outline-danger w-100 mt-1",
+              form: { data: { turbo_confirm: "Remove this photo?" } } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="text-muted">No intake photos for this repair.</p>
+<% end %>
+
+<h2 class="h4 mt-4">Services charged</h2>
 <% if @lines.any? %>
   <table class="table table-striped">
     <thead><tr><th>Service</th><th class="text-end">Charged</th></tr></thead>

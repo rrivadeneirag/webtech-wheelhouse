@@ -7,6 +7,7 @@ class StaffsController < ApplicationController
 
   def show
     @repairs = @staff.repairs.newest_first.includes(bike: :customer)
+                     .with_attached_intake_photos.with_rich_text_diagnosis
   end
 
   def new

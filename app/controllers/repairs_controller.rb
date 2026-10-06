@@ -4,7 +4,10 @@ class RepairsController < ApplicationController
   BLANK_LINES = 3 # empty service lines a form offers so you can add work without JS
 
   def index
-    @repairs = Repair.newest_first.includes(bike: :customer)
+    @repairs = Repair.newest_first
+                     .includes(bike: :customer)
+                     .with_attached_intake_photos
+                     .with_rich_text_diagnosis
   end
 
   def show
@@ -17,7 +20,8 @@ class RepairsController < ApplicationController
   end
 
   def create
-    @repair = Repair.new(repair_params)
+    @repair = Repair.new(repair_params.except(:intake_photos))
+    attach_new_photos(@repair)
     if @repair.save
       redirect_to @repair, notice: "Repair ##{@repair.id} was created."
     else
@@ -31,7 +35,9 @@ class RepairsController < ApplicationController
   end
 
   def update
-    if @repair.update(repair_params)
+    @repair.assign_attributes(repair_params.except(:intake_photos))
+    attach_new_photos(@repair)
+    if @repair.save
       redirect_to @repair, notice: "Repair ##{@repair.id} was updated."
     else
       pad_lines(@repair)
@@ -50,11 +56,23 @@ class RepairsController < ApplicationController
   private
 
   def set_repair
-    @repair = Repair.includes(:mechanic, bike: :customer).find(params[:id])
+    @repair = Repair.with_attached_intake_photos
+                    .with_rich_text_diagnosis
+                    .includes(:mechanic, bike: :customer)
+                    .find(params[:id])
   end
 
-  # Top up the form with empty lines so there is always room to add services,
-  # without any JavaScript. Lines left blank are ignored on save (reject_if).
+  # Add the uploaded photos to the ones the repair already has (never replace).
+  # Forcing the record dirty makes the attach wait for save, so the model's
+  # validations gate it: on a refused upload nothing is attached.
+  def attach_new_photos(repair)
+    files = Array(repair_params[:intake_photos]).reject(&:blank?)
+    return if files.empty?
+
+    repair.updated_at = Time.current unless repair.changed?
+    repair.intake_photos.attach(files)
+  end
+
   def pad_lines(repair)
     missing = BLANK_LINES - repair.repair_services.count(&:new_record?)
     missing.times { repair.repair_services.build } if missing.positive?
@@ -63,8 +81,9 @@ class RepairsController < ApplicationController
   def repair_params
     params.expect(
       repair: [
-        :bike_id, :mechanic_id, :status, :received_at, :promised_on, :handed_back_at,
-        repair_services_attributes: [[:id, :service_id, :charged_price, :_destroy]]
+        :bike_id, :mechanic_id, :status, :received_at, :promised_on, :handed_back_at, :diagnosis,
+        repair_services_attributes: [[:id, :service_id, :charged_price, :_destroy]],
+        intake_photos: []
       ]
     )
   end

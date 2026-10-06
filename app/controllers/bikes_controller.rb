@@ -7,6 +7,7 @@ class BikesController < ApplicationController
 
   def show
     @repairs = @bike.repairs.newest_first.includes(bike: :customer)
+                     .with_attached_intake_photos.with_rich_text_diagnosis
   end
 
   # A bike can be born from the bikes page (no owner yet) or from a customer's
