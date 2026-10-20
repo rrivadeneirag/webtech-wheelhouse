@@ -53,6 +53,53 @@ This starts the Rails server and the CSS watcher together. Open
 shows a thumbnail next to every repair that has intake photos — proof the seeded
 media and the image variants (via libvips) are working.
 
+## The JSON API
+
+Programs that are not a browser read Wheelhouse through a versioned JSON API under
+`/api/v1` — the full reference is in [`docs/api.md`](docs/api.md). Reading the price
+list is public; reading repairs and registering a service need a token.
+
+### Set the API token
+
+The token lives in the app's **encrypted credentials**, never in the code. Because
+`config/master.key` is not committed, set your own token on a fresh clone:
+
+```bash
+rm config/credentials.yml.enc config/master.key   # drop the keys you can't read
+EDITOR="nano" bin/rails credentials:edit           # opens a fresh credentials file
+```
+
+Add one line, then save and close the editor:
+
+```yaml
+api_token: choose-any-secret-string
+```
+
+That is the only place the token lives; none is written anywhere in the repository.
+
+### The price-list page
+
+The published page is at
+<https://rrivadeneirag.github.io/webtech-lab-10/> and reads this API with `fetch`.
+For the page to find the API, run this app on **port 3000** (which `bin/dev` uses) —
+that is the origin the page points at. CORS allows the page's origin (and a local dev
+server on port 8000); every other origin is refused.
+
+### Asking the API from the terminal
+
+The public price list:
+
+```bash
+curl http://localhost:3000/api/v1/services
+```
+
+A route that needs the token (use the token you set above):
+
+```bash
+curl -H "Authorization: Bearer choose-any-secret-string" \
+     http://localhost:3000/api/v1/repairs
+```
+
 ## Managing the workshop
 
 Every resource is reachable from the top navigation and supports the full set of

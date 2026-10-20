@@ -16,4 +16,13 @@ Rails.application.routes.draw do
   resources :repairs do
     resources :photos, only: :destroy, controller: "intake_photos"
   end
+
+  # JSON API for programs that are not a browser: the public price list, the
+  # private repairs for the accounting program, and registering a new service.
+  namespace :api do
+    namespace :v1 do
+      resources :services, only: %i[index show create]
+      resources :repairs,  only: %i[index show]
+    end
+  end
 end
