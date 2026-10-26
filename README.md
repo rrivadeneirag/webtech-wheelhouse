@@ -1,9 +1,10 @@
 # Wheelhouse
 
-The management app for **Wheelhouse**, a neighborhood bike repair shop. Alongside the
-public pages (Home, Services & prices, Visiting the workshop, and About), the shop can
-now **manage its whole workshop from the browser**: customers, bikes, repairs, services
-and staff can each be listed, viewed, created, edited and deleted.
+The management app for **Wheelhouse**, a neighborhood bike repair shop. Signed-in
+staff **manage the whole workshop from the browser**: customers, bikes, repairs,
+services and staff can each be listed, viewed, created, edited and deleted. The public
+price list stays open to everyone; everything else needs an account (see
+[Accounts & sign-in](#accounts--sign-in)).
 
 Built with **Ruby on Rails 8**, **PostgreSQL**, and **Bootstrap** (compiled from Sass,
 no CDN). Every list and detail page reads from a seeded PostgreSQL database.
@@ -49,9 +50,11 @@ bin/dev
 ```
 
 This starts the Rails server and the CSS watcher together. Open
-<http://localhost:3000> in your browser. On a fresh clone the **Repairs** page then
-shows a thumbnail next to every repair that has intake photos — proof the seeded
-media and the image variants (via libvips) are working.
+<http://localhost:3000> in your browser. Every page but the price list asks you to
+sign in first — use one of the seeded accounts in [Accounts & sign-in](#accounts--sign-in)
+(for example `martin@wheelhouse.cl` / `owner-martin-2026`). Once signed in, the
+**Repairs** page shows a thumbnail next to every repair that has intake photos — proof
+the seeded media and the image variants (via libvips) are working.
 
 ## The JSON API
 
