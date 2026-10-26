@@ -34,6 +34,13 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
+  # In development, every email is written to a file under tmp/mails/ (no SMTP
+  # server, no provider, no credentials). Open the file to read the message and
+  # follow its links. See the README.
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :file
+  config.action_mailer.file_settings = { location: Rails.root.join("tmp/mails") }
+
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
 

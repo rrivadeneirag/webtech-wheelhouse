@@ -1,4 +1,7 @@
 class ServicesController < ApplicationController
+  # The price list is public; creating, editing and deleting a service is not.
+  allow_unauthenticated_access only: %i[index show]
+
   before_action :set_service, only: %i[show edit update destroy]
 
   def index

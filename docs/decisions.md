@@ -45,3 +45,17 @@ between several.
 - **If the answer is that several mechanics share a repair:** `repairs.mechanic_id`
   would move out into a join table (repair_id, staff_id, and perhaps the part of
   the work each did), so the repair could name every mechanic who touched it.
+
+## 4. What role does a new account get by default?
+
+Accounts have one of three roles — `owner`, `mechanic` or `counter` — and a new
+account (someone who signs up on their own, with no staff member attached) has to
+start somewhere.
+
+- **Decision:** the default role is `counter`, the role with the fewest
+  permissions. In the workshop the owner runs the shop, a mechanic works on the
+  bikes, and the counter is the front desk — the narrowest job, with no ownership
+  and no workshop work beyond receiving bikes and reading the lists. A stranger who
+  signs up should land in the least-privileged role, so `counter` is the default.
+  An account is lifted to `mechanic` or `owner`, or joined to a staff member, only
+  from the seed or the console — never from a page.

@@ -5,7 +5,7 @@ class RepairsController < ApplicationController
 
   def index
     @repairs = Repair.newest_first
-                     .includes(bike: :customer)
+                     .includes(:taken_in_by, bike: :customer)
                      .with_attached_intake_photos
                      .with_rich_text_diagnosis
   end
@@ -21,6 +21,7 @@ class RepairsController < ApplicationController
 
   def create
     @repair = Repair.new(repair_params.except(:intake_photos))
+    @repair.taken_in_by = Current.user   # from the session, never the form
     attach_new_photos(@repair)
     if @repair.save
       redirect_to @repair, notice: "Repair ##{@repair.id} was created."
@@ -58,7 +59,7 @@ class RepairsController < ApplicationController
   def set_repair
     @repair = Repair.with_attached_intake_photos
                     .with_rich_text_diagnosis
-                    .includes(:mechanic, bike: :customer)
+                    .includes(:taken_in_by, :mechanic, bike: :customer)
                     .find(params[:id])
   end
 

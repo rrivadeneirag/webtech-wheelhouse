@@ -17,6 +17,8 @@ class Repair < ApplicationRecord
   MAX_PHOTO_BYTES = 10.megabytes
 
   belongs_to :bike
+  # The account that took the repair in (set from the session, never a form).
+  belongs_to :taken_in_by, class_name: "User", optional: true
   belongs_to :mechanic, class_name: "Staff", optional: true
   has_many :repair_services, dependent: :destroy
   has_many :services, through: :repair_services

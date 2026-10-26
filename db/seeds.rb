@@ -16,6 +16,8 @@ ActionText::RichText.delete_all if ActiveRecord::Base.connection.table_exists?("
 
 RepairService.delete_all
 Repair.delete_all
+Session.delete_all
+User.delete_all
 Bike.delete_all
 Service.delete_all
 Staff.delete_all
@@ -42,11 +44,44 @@ price_list.each do |name, price|
   services[name] = Service.create!(name: name, price: price, active: true)
 end
 
-# --- Staff: three mechanics and the person at the counter -----------------------
-diego   = Staff.create!(name: "Diego Fuentes",   role: "Mechanic")
-camila  = Staff.create!(name: "Camila Rojas",    role: "Mechanic")
-ignacio = Staff.create!(name: "Ignacio Soto",    role: "Mechanic")
-Staff.create!(name: "Valentina Pérez", role: "Counter")
+# --- Staff: the owner, three mechanics and the person at the counter -------------
+martin    = Staff.create!(name: "Martín Reyes",    role: "Owner")
+diego     = Staff.create!(name: "Diego Fuentes",   role: "Mechanic")
+camila    = Staff.create!(name: "Camila Rojas",    role: "Mechanic")
+ignacio   = Staff.create!(name: "Ignacio Soto",    role: "Mechanic")
+valentina = Staff.create!(name: "Valentina Pérez", role: "Counter")
+
+# --- Accounts (Lab 11) ----------------------------------------------------------
+# One account per staff member, joined to that member, with the role the member's
+# job maps to. Plus one account that belongs to no staff member, which takes the
+# default role. Passwords differ per account and live in the README (dev only).
+role_for_staff = { "Owner" => :owner, "Mechanic" => :mechanic, "Counter" => :counter }
+
+staff_logins = {
+  martin    => { email: "martin@wheelhouse.cl",    password: "owner-martin-2026" },
+  diego     => { email: "diego@wheelhouse.cl",     password: "mechanic-diego-2026" },
+  camila     => { email: "camila@wheelhouse.cl",    password: "mechanic-camila-2026" },
+  ignacio   => { email: "ignacio@wheelhouse.cl",   password: "mechanic-ignacio-26" },
+  valentina => { email: "valentina@wheelhouse.cl", password: "counter-valentina-26" },
+}
+
+accounts = {}
+staff_logins.each do |staff, creds|
+  accounts[staff] = User.create!(
+    email_address:         creds[:email],
+    password:              creds[:password],
+    password_confirmation: creds[:password],
+    role:                  role_for_staff.fetch(staff.role),
+    staff:                 staff
+  )
+end
+
+# One account with no staff member — it takes the default role.
+User.create!(
+  email_address:         "helper@wheelhouse.cl",
+  password:              "helper-default-2026",
+  password_confirmation: "helper-default-2026"
+)
 
 # --- Customers (11) -------------------------------------------------------------
 ana      = Customer.create!(name: "Ana Morales",     phone: "+56 9 8123 4567")
@@ -208,7 +243,15 @@ eligible.each_with_index do |repair, i|
   repair.save!
 end
 
+# --- Lab 11: who took each repair in --------------------------------------------
+# Every repair except the two most recently received records the account that
+# took it in; the counter is the person who receives bikes at the desk.
+intake_account = accounts[valentina]
+latest_two = Repair.order(received_at: :desc).first(2).map(&:id)
+Repair.where.not(id: latest_two).update_all(taken_in_by_id: intake_account.id)
+
 puts "Seed complete:"
 puts "  #{Customer.count} customers, #{Bike.count} bikes, #{Staff.count} staff"
 puts "  #{Service.count} services, #{Repair.count} repairs, #{RepairService.count} line items"
 puts "  #{ActiveStorage::Attachment.where(name: "intake_photos").count} intake photos, #{ActionText::RichText.where(record_type: "Repair").count} diagnoses"
+puts "  #{User.count} accounts (#{User.where.not(staff_id: nil).count} joined to staff)"

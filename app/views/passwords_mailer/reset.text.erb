@@ -1,0 +1,12 @@
+Hi,
+
+We got a request to reset the password for your Wheelhouse account.
+
+Reset it here:
+<%= edit_password_url(@user.password_reset_token) %>
+
+This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+
+If you didn't ask for this, you can ignore this email.
+
+— The Wheelhouse workshop

@@ -100,6 +100,36 @@ curl -H "Authorization: Bearer choose-any-secret-string" \
      http://localhost:3000/api/v1/repairs
 ```
 
+## Accounts & sign-in
+
+Most pages require signing in. The public price list (`/services` and a service's
+page) stays open; everything else — customers, bikes, repairs, staff and the home
+pages — needs an account. Accounts have a role (`owner`, `mechanic` or `counter`),
+and each repair records the account that took it in.
+
+You can sign up from the sign-in page, or use one of the seeded accounts below.
+**These accounts exist only in development (they come from the seed).**
+
+| Email                    | Role     | Password              |
+|--------------------------|----------|-----------------------|
+| martin@wheelhouse.cl     | owner    | owner-martin-2026     |
+| diego@wheelhouse.cl      | mechanic | mechanic-diego-2026   |
+| camila@wheelhouse.cl     | mechanic | mechanic-camila-2026  |
+| ignacio@wheelhouse.cl    | mechanic | mechanic-ignacio-26   |
+| valentina@wheelhouse.cl  | counter  | counter-valentina-26  |
+| helper@wheelhouse.cl     | counter  | helper-default-2026   |
+
+The first five are joined to staff members; `helper@wheelhouse.cl` belongs to no
+staff member and has the default role.
+
+### Emails in development
+
+The app never sends real email. In development every message — the welcome email
+after sign-up and the password-reset link — is **written to a file** under
+`tmp/mails/`. Open the newest file there to read the message and follow its links
+(the password-reset link opens the reset form in the app running locally). No SMTP
+server, provider or credential is involved.
+
 ## Managing the workshop
 
 Every resource is reachable from the top navigation and supports the full set of
