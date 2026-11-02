@@ -9,8 +9,8 @@
     <% end %>
   </td>
   <td><%= link_to "Repair ##{repair.id}", repair %></td>
-  <td><%= link_to repair.bike.make_model, repair.bike %></td>
-  <td><%= link_to repair.bike.customer.name, repair.bike.customer %></td>
+  <td><%= link_if_allowed(repair.bike, repair.bike.make_model) %></td>
+  <td><%= link_if_allowed(repair.bike.customer, repair.bike.customer.name) %></td>
   <td><span class="badge text-bg-secondary"><%= repair.status.humanize %></span></td>
   <td><%= format_day(repair.promised_on) || "—" %><% if repair.overdue? %> <span class="badge text-bg-warning">overdue</span><% end %></td>
   <td class="text-muted small"><%= repair.diagnosis.to_plain_text.truncate(60).presence || "—" %></td>

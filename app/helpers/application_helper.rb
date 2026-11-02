@@ -1,4 +1,10 @@
 module ApplicationHelper
+  # A link to the record only for a person the policy lets open it; otherwise
+  # just the label as plain text.
+  def link_if_allowed(record, label)
+    policy(record).show? ? link_to(label, record) : label
+  end
+
   # A day, shown as a day.
   def format_day(date)
     date&.strftime("%B %-d, %Y")

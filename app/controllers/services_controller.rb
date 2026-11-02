@@ -1,6 +1,8 @@
 class ServicesController < ApplicationController
   # The price list is public; creating, editing and deleting a service is not.
   allow_unauthenticated_access only: %i[index show]
+  skip_after_action :verify_authorized, only: %i[index show]
+  skip_after_action :verify_policy_scoped, only: :index
 
   before_action :set_service, only: %i[show edit update destroy]
 
@@ -14,10 +16,12 @@ class ServicesController < ApplicationController
 
   def new
     @service = Service.new
+    authorize @service
   end
 
   def create
     @service = Service.new(service_params)
+    authorize @service
     if @service.save
       redirect_to @service, notice: "#{@service.name} was added."
     else
@@ -26,9 +30,11 @@ class ServicesController < ApplicationController
   end
 
   def edit
+    authorize @service
   end
 
   def update
+    authorize @service
     if @service.update(service_params)
       redirect_to @service, notice: "#{@service.name} was updated."
     else
@@ -37,6 +43,7 @@ class ServicesController < ApplicationController
   end
 
   def destroy
+    authorize @service
     if @service.destroy
       redirect_to services_path, notice: "#{@service.name} was deleted.", status: :see_other
     else

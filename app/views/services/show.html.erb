@@ -3,9 +3,9 @@
 <div class="d-flex justify-content-between align-items-start mb-3">
   <h1 class="mb-0"><%= @service.name %></h1>
   <div class="d-flex gap-2">
-    <%= link_to "Edit", edit_service_path(@service), class: "btn btn-outline-primary" %>
-    <%= button_to "Delete", @service, method: :delete, class: "btn btn-outline-danger",
-          form: { data: { turbo_confirm: "Delete #{@service.name}?" } } %>
+    <% if policy(@service).edit? %><%= link_to "Edit", edit_service_path(@service), class: "btn btn-outline-primary" %><% end %>
+    <% if policy(@service).destroy? %><%= button_to "Delete", @service, method: :delete, class: "btn btn-outline-danger",
+          form: { data: { turbo_confirm: "Delete #{@service.name}?" } } %><% end %>
   </div>
 </div>
 <dl class="row">
@@ -20,8 +20,8 @@
     <tbody>
       <% @lines.each do |line| %>
         <tr>
-          <td><%= link_to "Repair ##{line.repair.id}", line.repair %></td>
-          <td><%= link_to line.repair.bike.make_model, line.repair.bike %></td>
+          <td><%= link_if_allowed(line.repair, "Repair ##{line.repair.id}") %></td>
+          <td><%= link_if_allowed(line.repair.bike, line.repair.bike.make_model) %></td>
           <td class="text-end"><%= number_to_currency(line.charged_price) %></td>
         </tr>
       <% end %>

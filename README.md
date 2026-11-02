@@ -113,17 +113,19 @@ and each repair records the account that took it in.
 You can sign up from the sign-in page, or use one of the seeded accounts below.
 **These accounts exist only in development (they come from the seed).**
 
-| Email                    | Role     | Password              |
-|--------------------------|----------|-----------------------|
-| martin@wheelhouse.cl     | owner    | owner-martin-2026     |
-| diego@wheelhouse.cl      | mechanic | mechanic-diego-2026   |
-| camila@wheelhouse.cl     | mechanic | mechanic-camila-2026  |
-| ignacio@wheelhouse.cl    | mechanic | mechanic-ignacio-26   |
-| valentina@wheelhouse.cl  | counter  | counter-valentina-26  |
-| helper@wheelhouse.cl     | counter  | helper-default-2026   |
+| Email                    | Role     | Password              | What this account can do |
+|--------------------------|----------|-----------------------|--------------------------|
+| martin@wheelhouse.cl     | owner    | owner-martin-2026     | Everything: manages services, staff, customers, bikes and every repair. |
+| diego@wheelhouse.cl      | mechanic | mechanic-diego-2026   | Reads services & staff; works only on the repairs assigned to Diego (status, diagnosis, photos). |
+| camila@wheelhouse.cl     | mechanic | mechanic-camila-2026  | Same as a mechanic, on Camila's own repairs. |
+| ignacio@wheelhouse.cl    | mechanic | mechanic-ignacio-26   | Same as a mechanic, on Ignacio's own repairs. |
+| valentina@wheelhouse.cl  | counter  | counter-valentina-26  | Reads services & staff; manages customers and bikes; takes repairs in and edits any not yet handed back. |
+| helper@wheelhouse.cl     | counter  | helper-default-2026   | Same as a counter (the default role), joined to no staff member. |
 
 The first five are joined to staff members; `helper@wheelhouse.cl` belongs to no
-staff member and has the default role.
+staff member and has the default role. The full rules — what each role may do with
+every resource, and under which condition — are in
+[`docs/permissions.md`](docs/permissions.md).
 
 ### Emails in development
 

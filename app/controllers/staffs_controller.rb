@@ -2,20 +2,23 @@ class StaffsController < ApplicationController
   before_action :set_staff, only: %i[show edit update destroy]
 
   def index
-    @staffs = Staff.by_name.includes(:repairs)
+    @staffs = policy_scope(Staff).by_name.includes(:repairs)
   end
 
   def show
-    @repairs = @staff.repairs.newest_first.includes(bike: :customer)
+    authorize @staff
+    @repairs = policy_scope(@staff.repairs).newest_first.includes(bike: :customer)
                      .with_attached_intake_photos.with_rich_text_diagnosis
   end
 
   def new
     @staff = Staff.new
+    authorize @staff
   end
 
   def create
     @staff = Staff.new(staff_params)
+    authorize @staff
     if @staff.save
       redirect_to @staff, notice: "#{@staff.name} was added."
     else
@@ -24,9 +27,11 @@ class StaffsController < ApplicationController
   end
 
   def edit
+    authorize @staff
   end
 
   def update
+    authorize @staff
     if @staff.update(staff_params)
       redirect_to @staff, notice: "#{@staff.name} was updated."
     else
@@ -35,6 +40,7 @@ class StaffsController < ApplicationController
   end
 
   def destroy
+    authorize @staff
     if @staff.destroy
       redirect_to staffs_path, notice: "#{@staff.name} was deleted.", status: :see_other
     else

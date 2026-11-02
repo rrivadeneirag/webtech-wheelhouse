@@ -48,6 +48,12 @@ class Repair < ApplicationRecord
   scope :in_shop,      -> { where(handed_back_at: nil) }
   scope :overdue,      -> { in_shop.where("promised_on < ?", Date.current) }
 
+  # A repair is 'handed back' once it reaches the final state of the lifecycle
+  # (collected): the instant it was handed back is recorded in handed_back_at.
+  def handed_back?
+    handed_back_at.present?
+  end
+
   def overdue?
     handed_back_at.nil? && promised_on.present? && promised_on < Date.current
   end

@@ -2,11 +2,13 @@ class BikesController < ApplicationController
   before_action :set_bike, only: %i[show edit update destroy]
 
   def index
-    @bikes = Bike.by_model.includes(:customer)
+    authorize Bike                           # a mechanic has no access: 403
+    @bikes = policy_scope(Bike).by_model.includes(:customer)
   end
 
   def show
-    @repairs = @bike.repairs.newest_first.includes(bike: :customer)
+    authorize @bike
+    @repairs = policy_scope(@bike.repairs).newest_first.includes(bike: :customer)
                      .with_attached_intake_photos.with_rich_text_diagnosis
   end
 
@@ -14,10 +16,12 @@ class BikesController < ApplicationController
   # page (owner already chosen), so we seed customer_id from the query string.
   def new
     @bike = Bike.new(customer_id: params[:customer_id])
+    authorize @bike
   end
 
   def create
     @bike = Bike.new(bike_params)
+    authorize @bike
     if @bike.save
       redirect_to @bike, notice: "#{@bike.make_model} was added."
     else
@@ -26,9 +30,11 @@ class BikesController < ApplicationController
   end
 
   def edit
+    authorize @bike
   end
 
   def update
+    authorize @bike
     if @bike.update(bike_params)
       redirect_to @bike, notice: "#{@bike.make_model} was updated."
     else
@@ -37,6 +43,7 @@ class BikesController < ApplicationController
   end
 
   def destroy
+    authorize @bike
     if @bike.destroy
       redirect_to bikes_path, notice: "#{@bike.make_model} was deleted.", status: :see_other
     else

@@ -59,3 +59,22 @@ start somewhere.
   signs up should land in the least-privileged role, so `counter` is the default.
   An account is lifted to `mechanic` or `owner`, or joined to a staff member, only
   from the seed or the console — never from a page.
+
+## 5. Which actions skip authorization, and why
+
+Pundit runs on every controller action by default (`verify_authorized` /
+`verify_policy_scoped`), so an action that forgets to ask a policy fails in
+development. A few actions deliberately skip it:
+
+- **`services#index` and `services#show`** — the price list is public, open to
+  everyone including visitors with no account, so these two actions are not
+  authorized.
+- **`pages#home`, `pages#visiting`, `pages#about`** — static pages behind a session.
+  They require a signed-in account (the authentication filter), but they show no
+  resource, so there is nothing to authorize.
+- **`sessions`, `passwords`, `registrations`** — the sign-in, password-reset and
+  sign-up flows themselves. They run before an account exists or to end a session,
+  so they authorize no resource.
+
+The JSON API under `/api/v1` is built on `ActionController::API` and does not include
+Pundit at all: it is guarded by its token, exactly as before, and is unchanged.

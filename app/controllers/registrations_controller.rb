@@ -1,4 +1,9 @@
 class RegistrationsController < ApplicationController
+  # These actions run the authentication flow or show static pages; they do not
+  # authorize a resource (see docs/decisions.md).
+  skip_after_action :verify_authorized
+  skip_after_action :verify_policy_scoped
+
   allow_unauthenticated_access only: %i[new create]
 
   def new
